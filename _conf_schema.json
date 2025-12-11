@@ -1,0 +1,27 @@
+{
+  "enabled": {
+    "description": "是否开启反机器人检测",
+    "type": "bool",
+    "default": true
+  },
+  "detect_regex": {
+    "description": "触发检测的正则表达式",
+    "type": "string",
+    "default": "(?i).*(bot|机器人|机机人|你是[个個]?机器|bot.?bot|机器人.?机器人).*"
+  },
+  "reply_text": {
+    "description": "普通触发回复",
+    "type": "string",
+    "default": "你才是机器人baka！！！😡"
+  },
+  "at_reply_text": {
+    "description": "被@时回复",
+    "type": "string",
+    "default": "你@我干嘛！有种再说一遍？你才是机器人baka！！！💢"
+  },
+  "add_emoji": {
+    "description": "自动加随机表情",
+    "type": "bool",
+    "default": true
+  }
+}
