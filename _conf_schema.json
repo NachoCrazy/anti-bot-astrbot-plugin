@@ -30,6 +30,11 @@
     "type": "string",
     "default": "你@我干嘛！有种再说一遍？你才是机器人baka！！！💢"
   },
+  "test_reply_text": {
+    "description": "测试关键词回复",
+    "type": "string",
+    "default": "test你妈喵 🤬"
+  },
   "add_emoji": {
     "description": "自动加随机表情",
     "type": "bool",
