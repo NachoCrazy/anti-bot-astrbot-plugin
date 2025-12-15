@@ -4,10 +4,21 @@
     "type": "bool",
     "default": true
   },
-  "detect_regex": {
-    "description": "触发检测的正则表达式",
-    "type": "string",
-    "default": "(?i).*(bot|机器人|机机人|你是[个個]?机器|bot.?bot|机器人.?机器人).*"
+  "negative_keywords": {
+    "description": "触发检测的负面关键词列表",
+    "type": "list",
+    "items": {
+      "type": "string"
+    },
+    "default": ["机器人", "bot", "人机", "机机人", "你是机器人", "你是bot"]
+  },
+  "positive_keywords": {
+    "description": "正面评价关键词列表（包含负面关键词但同时包含正面关键词时不触发）",
+    "type": "list",
+    "items": {
+      "type": "string"
+    },
+    "default": ["好", "棒", "赞", "优秀", "聪明", "厉害"]
   },
   "reply_text": {
     "description": "普通触发回复",
