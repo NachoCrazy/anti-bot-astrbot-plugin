@@ -1,4 +1,4 @@
-henghetonguol# main.py —— 终极 NapCat 兼容版
+# main.py —— 终极 NapCat 兼容版
 from astrbot.api import star
 from astrbot.api.event import AstrMessageEvent, filter
 from astrbot.core.message.message_event_result import MessageChain
