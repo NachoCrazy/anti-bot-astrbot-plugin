@@ -1,4 +1,4 @@
-name: "astrbot_plugin_anti-bot"
+name: "astrbot-plugin-anti-bot"
 author: "NachoCrazy"
 desc: "bot可以自己分辨群友有没有说bot坏话从而自己怼人的插件"
 version: "1.5.0"
