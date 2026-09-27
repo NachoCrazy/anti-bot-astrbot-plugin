@@ -1,39 +1,59 @@
-# Anti-Bot Plugin (反机器人插件)
+AstrBot Plugin Anti Bot
 
-这是一个专为 AstrBot 设计的插件，用于自动检测并"怼回"那些提及"机器人"相关负面关键词的消息。
+«一个基于 AI 语义识别 的 AstrBot 防御插件，让 Bot 不再依赖关键词，而是真正理解群友是不是在“骂自己”。»
 
-## 功能特点
+✨ 功能特色
 
-- 自动检测包含"bot"、"机器人"等负面关键词的消息
-- 区分正面和负面描述，仅对负面描述做出反应
-- 区分普通消息和@消息，提供不同的回复内容
-- 检测到"test"或"测试"关键词时自动回复"test你妈喵"
-- 可自定义检测关键词和回复内容
-- 防止自我触发机制
-- 可开关的表情符号增强功能
+- 🧠 AI 语义识别：使用 AstrBot 当前配置的大模型判断是否在针对机器人，而非关键词匹配。
+- 😼 傲娇回怼：自动生成自然回复，不再是固定文本。
+- 🛡️ 误判率更低：普通聊天、玩梗、讨论别人不会触发。
+- ⏱️ 冷却机制：同一用户可配置冷却时间，防止刷屏。
+- ⚙️ 完全兼容 AstrBot Provider：Gemini、OpenAI、DeepSeek、Ollama 等均可直接使用。
 
-## 配置选项
+📦 安装
 
-安装后可通过 AstrBot 管理面板进行以下配置：
+插件市场
 
-- `enabled`: 是否开启反机器人检测（默认: true）
-- `negative_keywords`: 触发检测的负面关键词列表（默认: ["机器人", "bot", "人机", "机机人", "你是机器人", "你是bot"]）
-- `positive_keywords`: 正面评价关键词列表（包含负面关键词但同时包含正面关键词时不触发）（默认: ["好", "棒", "赞", "优秀", "聪明", "厉害"]）
-- `reply_text`: 普通触发回复（默认: "你才是机器人baka！！！😡"）
-- `at_reply_text`: 被@时回复（默认: "你@我干嘛！有种再说一遍？你才是机器人baka！！！💢"）
-- `test_reply_text`: 测试关键词回复（默认: "test你妈喵 🤬"）
-- `add_emoji`: 自动加随机表情（默认: true）
+直接搜索 反机器人防御（AI版） 即可安装。
 
-## 使用说明
+GitHub
 
-1. 将插件文件夹放入 AstrBot 的 `data/plugins/` 目录下
-2. 重启 AstrBot
-3. 在管理面板中配置相关参数（可选）
-4. 插件会自动检测并回复含有机器人相关负面关键词的消息
+git clone https://github.com/NachoCrazy/anti-bot-astrbot-plugin.git
 
-## 注意事项
+复制到 AstrBot 的 "data/plugins/" 后重载插件即可。
 
-- 此插件专为 NapCat 平台优化设计，但在其他平台如 Telegram 等也能正常使用
-- 可通过配置完全自定义检测规则和回复内容
-- 具有防自触发机制，避免无限循环回复
-- 只有当消息包含负面关键词且不包含正面关键词时才会触发回复
+⚙️ 配置
+
+配置项| 默认| 说明
+enabled| true| 是否启用插件
+confidence| 0.75| AI 判定阈值
+cooldown| 30| 同一用户冷却（秒）
+max_reply_length| 20| 最大回复长度
+enable_at_reply| false| 是否优先检测 @Bot
+system_prompt| 内置| 插件独立 Prompt
+
+«"system_prompt" 为插件独立使用，不会影响 AstrBot 主人格或其他插件。»
+
+🚀 工作流程
+
+1. 收到群消息
+2. 调用 AstrBot 当前 LLM
+3. AI 判断是否在针对 Bot
+4. 若成立，则生成一句自然回怼
+5. 回复并进入冷却
+
+🆕 v2.0 更新
+
+- 从 关键词识别 升级为 AI 语义识别
+- 新增置信度判定
+- 新增冷却机制
+- 新增独立 System Prompt
+- 支持所有 AstrBot Provider
+
+📄 License
+
+MIT License
+
+---
+
+Made with ❤️ by NachoCrazy

@@ -1,43 +1,32 @@
 {
   "enabled": {
-    "description": "是否开启反机器人检测",
+    "description": "是否开启 AI 反机器人检测",
     "type": "bool",
     "default": true
   },
-  "negative_keywords": {
-    "description": "触发检测的负面关键词列表",
-    "type": "list",
-    "items": {
-      "type": "string"
-    },
-    "default": ["机器人", "bot", "人机", "机机人", "你是机器人", "你是bot"]
+  "confidence": {
+    "description": "AI 判定触发阈值（0~1）",
+    "type": "float",
+    "default": 0.75
   },
-  "positive_keywords": {
-    "description": "正面评价关键词列表（包含负面关键词但同时包含正面关键词时不触发）",
-    "type": "list",
-    "items": {
-      "type": "string"
-    },
-    "default": ["好", "棒", "赞", "优秀", "聪明", "厉害"]
+  "cooldown": {
+    "description": "同一用户触发冷却时间（秒）",
+    "type": "int",
+    "default": 30
   },
-  "reply_text": {
-    "description": "普通触发回复",
-    "type": "string",
-    "default": "你才是机器人baka！！！😡"
+  "max_reply_length": {
+    "description": "AI 最大回复长度",
+    "type": "int",
+    "default": 20
   },
-  "at_reply_text": {
-    "description": "被@时回复",
-    "type": "string",
-    "default": "你@我干嘛！有种再说一遍？你才是机器人baka！！！💢"
-  },
-  "test_reply_text": {
-    "description": "测试关键词回复",
-    "type": "string",
-    "default": "test你妈喵 🤬"
-  },
-  "add_emoji": {
-    "description": "自动加随机表情",
+  "enable_at_reply": {
+    "description": "仅被 @ 时优先触发（关闭则普通消息也检测）",
     "type": "bool",
-    "default": true
+    "default": false
+  },
+  "system_prompt": {
+    "description": "插件独立 AI 系统提示词",
+    "type": "string",
+    "default": "你是QQ群机器人防御检测器。判断用户是否在辱骂、嘲讽、挑衅机器人本人。若不是针对机器人，返回JSON：{\"attack\":false}；若是，则返回JSON：{\"attack\":true,\"reply\":\"20字以内傲娇回复\"}。禁止Markdown、解释和额外文本。"
   }
 }

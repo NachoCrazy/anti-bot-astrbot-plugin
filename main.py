@@ -1,74 +1,80 @@
-# main.py —— 终极 NapCat 兼容版
-from astrbot.api import star
+import json
+import time
+
+from astrbot.api.star import Context, Star, register
 from astrbot.api.event import AstrMessageEvent, filter
-from astrbot.core.message.message_event_result import MessageChain
-from astrbot.api import AstrBotConfig, logger
-import random
 
-# 默认配置常量
-DEFAULT_NEGATIVE_KEYWORDS = ["机器人", "bot", "人机"]
-DEFAULT_POSITIVE_KEYWORDS = ["好", "棒", "赞", "优秀", "聪明"]
-DEFAULT_REPLY = "你才是机器人baka！！！😡"
-DEFAULT_AT_REPLY = "你@我干嘛！有种再说一遍？你才是机器人baka！！！💢"
-DEFAULT_TEST_REPLY = "test你妈喵 🤬"
+SYSTEM_PROMPT = """
+你是QQ群机器人防御检测器。
 
-class Main(star.Star):
-    def __init__(self, context: star.Context, config: AstrBotConfig):
+任务：
+判断用户是否在辱骂、嘲讽、挑衅机器人本人。
+
+规则：
+1. 对象必须是机器人/Bot/AI。
+2. 普通聊天、玩梗、讨论别人，一律 attack=false。
+3. 如果攻击成立，生成一句20字以内的傲娇回怼。
+4. 禁止脏话、政治、辱骂家人。
+
+只输出 JSON：
+
+攻击：
+{"attack":true,"reply":"哈？你先学会用再说！"}
+
+未攻击：
+{"attack":false}
+"""
+
+@register(
+    "astrbot_plugin_anti_bot",
+    "NachoCrazy",
+    "AI语义防御插件",
+    "2.0.0",
+)
+class AntiBotPlugin(Star):
+
+    def __init__(self, context: Context):
         super().__init__(context)
-        self.config = config
+        self.cooldown = {}
 
-    @filter.regex(r"(?i)(机器人|bot|人机)", priority=9)
-    async def anti_bot(self, event: AstrMessageEvent):
-        enabled = self.config.get("enabled", True)
-        if not enabled:
+    @filter.event_message_type(filter.EventMessageType.GROUP_MESSAGE)
+    async def on_group(self, event: AstrMessageEvent):
+
+        # 不处理自己
+        if event.get_sender_id() == event.get_self_id():
             return
 
-        # 获取负面关键词和正面关键词
-        negative_keywords = self.config.get("negative_keywords", DEFAULT_NEGATIVE_KEYWORDS)
-        positive_keywords = self.config.get("positive_keywords", DEFAULT_POSITIVE_KEYWORDS)
-        
-        # 检查是否包含负面关键词
-        message = event.message_str.lower()
-        contains_negative = any(keyword.lower() in message for keyword in negative_keywords)
-        
-        # 检查是否包含正面关键词
-        contains_positive = any(keyword.lower() in message for keyword in positive_keywords)
-        
-        # 只有包含负面关键词且不包含正面关键词时才触发
-        if not contains_negative or contains_positive:
+        uid = str(event.get_sender_id())
+        now = time.time()
+
+        # 30 秒冷却
+        if uid in self.cooldown and now - self.cooldown[uid] < 30:
             return
 
-        # 防自触发（优化：检查是否包含自己的回复关键词）
-        if any(word in event.message_str.lower() for word in ["baka", "你才是"]):
+        provider = self.context.get_using_provider()
+
+        result = await provider.text_chat(
+            prompt=event.message_str,
+            system_prompt=SYSTEM_PROMPT,
+            temperature=0.2,
+            max_tokens=80,
+        )
+
+        text = (
+            result.completion_text
+            .replace("```json", "")
+            .replace("```", "")
+            .strip()
+        )
+
+        try:
+            data = json.loads(text)
+        except Exception:
             return
 
-        reply = self.config.get("reply_text", DEFAULT_REPLY)
-        at_reply = self.config.get("at_reply_text", DEFAULT_AT_REPLY)
-
-        # 检测是否被@
-        is_at_me = event.is_at_or_wake_command
-        
-        # 记录调试信息
-        logger.debug(f"Anti-bot triggered: message='{event.message_str}', is_at_me={is_at_me}, is_at_or_wake_command={event.is_at_or_wake_command}")
-
-        final_reply = at_reply if is_at_me else reply
-
-        if self.config.get("add_emoji", True):
-            angry_emojis = ["💢", "😤", "🤬", "🔥", "👊", "💥"]
-            final_reply += random.choice(angry_emojis)
-
-        await event.send(MessageChain().message(final_reply))
-
-    @filter.regex(r"(?i)(test|测试)", priority=8)
-    async def anti_test(self, event: AstrMessageEvent):
-        """检测到test或测试关键词时的特殊回复"""
-        enabled = self.config.get("enabled", True)
-        if not enabled:
+        if not data.get("attack", False):
             return
-            
-        # 防自触发
-        if "test你妈喵" in event.message_str:
-            return
-            
-        test_reply = self.config.get("test_reply_text", DEFAULT_TEST_REPLY)
-        await event.send(MessageChain().message(test_reply))
+
+        self.cooldown[uid] = now
+
+        yield event.plain_result(data["reply"])

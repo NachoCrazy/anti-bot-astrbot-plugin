@@ -1,7 +1,7 @@
 name: "astrbot_plugin_anti_bot"
 author: "NachoCrazy"
-desc: "bot可以自己分辨群友有没有说bot坏话从而自己怼人的插件"
-version: "1.5.0"
-display_name: "反机器人防御（可配置）"
+desc: "基于 AI 语义识别的 AstrBot 机器人防御插件，可自动判断并回怼针对 Bot 的消息"
+version: "2.0.0"
+display_name: "反机器人防御（AI版）"
 config: true
 repo: "https://github.com/NachoCrazy/anti-bot-astrbot-plugin"
